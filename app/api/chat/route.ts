@@ -7,7 +7,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   // if (!configuration.apiKey) {
   //   return NextResponse.json({
   //     error: {
@@ -16,16 +16,14 @@ export async function GET(req: NextRequest) {
   //     },
   //   });
   // }
-
+  
   try {
+    const messages = await req.json() // res now contains body
+   
+    console.log("MESSAGES", messages)
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
-          content: "what is a dog?",
-        },
-      ],
+      messages: messages,
       temperature: 1,
       max_tokens: 256,
       top_p: 1,
