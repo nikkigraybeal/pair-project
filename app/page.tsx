@@ -1,6 +1,6 @@
 "use client";
 import { ChangeEvent, useState, useEffect, useRef } from "react";
-import { CompletionMessage } from "@/types/completionMessage";
+import { CompletionMessage } from "@/types/CompletionMessage";
 import ChatContainer from "./components/ChatContainer";
 
 export default function Home() {

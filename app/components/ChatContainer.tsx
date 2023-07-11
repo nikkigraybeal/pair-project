@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { CompletionMessage } from "@/types/completionMessage";
+import { CompletionMessage } from "@/types/CompletionMessage";
 import Response from "./Response";
 
 export interface ChatContainerProps {
