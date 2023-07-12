@@ -1,5 +1,5 @@
 import React from "react";
-import MessageComponent from "./MessageComponent";
+import ReactMarkdown from "react-markdown";
 
 export interface ResponseProps {
   message: string;
@@ -9,7 +9,7 @@ export interface ResponseProps {
 export default function Response({ message, role }: ResponseProps) {
   return (
     <div
-      className={`flex flex-row items-start p-4 ${
+      className={`flex flex-row items-start p-4  ${
         role === "user" ? "bg-slate-600" : "bg-slate-700"
       }`}
     >
@@ -37,9 +37,9 @@ export default function Response({ message, role }: ResponseProps) {
         )}
       </span>
 
-      <div className="container mx-auto">
-        <pre className="whitespace-pre-wrap break-words">
-          <MessageComponent message={message} />
+      <div className="container mx-auto ">
+        <pre className="whitespace-pre-wrap break-words ">
+          <ReactMarkdown>{message}</ReactMarkdown>
         </pre>
       </div>
     </div>
