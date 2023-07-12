@@ -23,11 +23,11 @@ export default function Home() {
       });
 
       const data = await res.json();
-      //console.log("DATA", data);
       setChatHistory([
         ...messages, 
         { role: "assistant", content: `${data.result}` },
       ]);
+      setUserPrompt("")
     } catch {
       throw new Error("something went wrong");
     }
@@ -46,15 +46,4 @@ export default function Home() {
       <button className="border-2 rounded-lg p-2 mt-4"onClick={handleSubmit}>generate answer</button>
     </main>
   );
-}
-
-async function getTestCall() {
-  const res = await fetch("/api/chat", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  console.log(data.result);
 }
