@@ -1,4 +1,4 @@
 export interface CompletionMessage {
-  "role": string,
-  "content": string
+  role: string;
+  content: string;
 }

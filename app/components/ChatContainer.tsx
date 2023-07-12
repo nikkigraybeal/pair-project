@@ -2,10 +2,10 @@ import { useEffect, useRef } from "react";
 import { CompletionMessage } from "@/types/CompletionMessage";
 import Response from "./Response";
 export interface ChatContainerProps {
-  chatHist: CompletionMessage[]
+  chatHist: CompletionMessage[];
 }
 
-export default function ChatContainer({chatHist}: ChatContainerProps) {
+export default function ChatContainer({ chatHist }: ChatContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
