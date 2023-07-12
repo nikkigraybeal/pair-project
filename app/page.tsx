@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, useState, useEffect, useRef } from "react";
+import { ChangeEvent, useState, } from "react";
 import { CompletionMessage } from "@/types/CompletionMessage";
 import ChatContainer from "./components/ChatContainer";
 
@@ -12,7 +12,7 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    const messages = [{ role: "user", content: `${userPrompt}` }];
+    const messages = [...chatHistory, { role: "user", content: `${userPrompt}` }];
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -23,9 +23,9 @@ export default function Home() {
       });
 
       const data = await res.json();
-      console.log("DATA", data);
+      //console.log("DATA", data);
       setChatHistory([
-        ...chatHistory, ...messages, 
+        ...messages, 
         { role: "assistant", content: `${data.result}` },
       ]);
     } catch {

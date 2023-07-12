@@ -8,14 +8,14 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export async function POST(req: NextRequest) {
-  // if (!configuration.apiKey) {
-  //   return NextResponse.json({
-  //     error: {
-  //       message:
-  //         "OpenAI API key not configured, please follow instructions in README.md",
-  //     },
-  //   });
-  // }
+  if (!configuration.apiKey) {
+    return NextResponse.json({
+      error: {
+        message:
+          "OpenAI API key not configured, please follow instructions in README.md",
+      },
+    });
+  }
   
   try {
     const messages = await req.json() // res now contains body
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       presence_penalty: 0,
     });
 
-    console.log("COMPLETION", completion.data.choices[0].message?.content);
+    //console.log("COMPLETION", completion.data.choices[0].message?.content);
     return NextResponse.json({
       result: completion.data.choices[0].message?.content,
     });
