@@ -2,10 +2,12 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { CompletionMessage } from "@/types/CompletionMessage";
 import ChatContainer from "./components/ChatContainer";
+import { ThreeDots } from "react-loader-spinner";
 
 export default function Home() {
   const [userPrompt, setUserPrompt] = useState<string>("");
   const [chatHistory, setChatHistory] = useState<CompletionMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleUserPrompt = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setUserPrompt(e.target.value);
@@ -13,6 +15,7 @@ export default function Home() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const messages = [
       ...chatHistory,
@@ -36,6 +39,7 @@ export default function Home() {
       ]);
 
       setUserPrompt("");
+      setIsLoading(false);
     } catch {
       throw new Error("something went wrong");
     }
@@ -50,17 +54,25 @@ export default function Home() {
         onSubmit={handleSubmit}
       >
         <textarea
-          className="text-black w-full rounded-lg p-2 h-20 mr-4"
+          className="text-black w-full rounded-lg p-2 w-full mr-4"
           placeholder="ask me anything"
           value={userPrompt}
           onChange={handleUserPrompt}
         />
-        <button
-          type="submit"
-          className="border-2 rounded-lg p-2 hover:bg-gray-300 hover:text-black"
-        >
-          Generate Answer
-        </button>
+        <div className="flex items-center justify-center h-20">
+          <button
+            type="submit"
+            className="border-2 rounded-lg p-2 hover:bg-gray-300 hover:text-black w-28"
+          >
+            <span className="flex items-center">
+              {isLoading ? (
+                <ThreeDots height="54" width="100" />
+              ) : (
+                <span>Generate Answer</span>
+              )}
+            </span>
+          </button>
+        </div>
       </form>
     </main>
   );
