@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { CompletionMessage } from "@/types/CompletionMessage";
 import Response from "./Response";
+import { CompletionMessage } from "@/types/CompletionMessage";
+
 export interface ChatContainerProps {
   chatHist: CompletionMessage[];
 }
@@ -22,7 +23,7 @@ export default function ChatContainer({ chatHist }: ChatContainerProps) {
 
   return (
     <div
-      className="overflow-y-auto  h-[60vh] w-full border-solid border-2 border-white rounded-lg p-4"
+      className="overflow-y-auto h-full w-full overflow-auto border-solid border-2 border-white rounded-lg p-4"
       ref={containerRef}
     >
       {chatHist.map((message, idx) => {
