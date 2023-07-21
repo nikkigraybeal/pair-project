@@ -27,6 +27,7 @@ export default function ChatContainer({ chatHist }: ChatContainerProps) {
       ref={containerRef}
     >
       {chatHist.map((message, idx) => {
+        if (idx === 0) { return ""}
         return (
           <Response key={idx} message={message.content} role={message.role} />
         );

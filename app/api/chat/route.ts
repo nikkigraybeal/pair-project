@@ -19,12 +19,13 @@ export async function POST(req: NextRequest) {
 
   try {
     const messages = await req.json(); // res now contains body
+    console.log("MESSAGES", messages)
 
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: messages,
-      temperature: 1,
-      max_tokens: 256,
+      temperature: .6,
+      max_tokens: 400,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
