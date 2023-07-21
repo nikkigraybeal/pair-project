@@ -6,8 +6,6 @@ import { ThreeDots } from "react-loader-spinner";
 
 export default function Home() {
   const [voiceMode, setVoiceMode] = useState(true);
-  const [convertedText, setConvertedText] = useState("")
-  const [formData, setFormData] = useState<FormData | null>(null);
   const [userPrompt, setUserPrompt] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(false);
@@ -24,43 +22,50 @@ export default function Home() {
   let chunks: any = [];
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
+    if (typeof window !== "undefined") {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
           const newMediaRecorder = new MediaRecorder(stream);
           newMediaRecorder.onstart = () => {
             chunks = [];
           };
-          newMediaRecorder.ondataavailable = e => {
+          newMediaRecorder.ondataavailable = (e) => {
             chunks.push(e.data);
           };
           newMediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+            const audioBlob = new Blob(chunks, { type: "audio/webm" });
             const audioUrl = URL.createObjectURL(audioBlob);
             const audio = new Audio(audioUrl);
             audio.onerror = function (err) {
-              console.error('Error playing audio:', err);
+              console.error("Error playing audio:", err);
             };
-            //audio.play();
+
             try {
               const reader = new FileReader();
               reader.readAsDataURL(audioBlob);
               reader.onloadend = async function () {
-                const base64Audio = reader.result?.split(',')[1]; // Remove the data URL prefix
+                const base64Audio = reader.result?.split(",")[1]; // Remove the data URL prefix
                 const response = await fetch("/api/audioChat", {
                   method: "POST",
                   headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json",
                   },
                   body: JSON.stringify({ audio: base64Audio }),
                 });
                 const data = await response.json();
                 if (response.status !== 200) {
-                  throw data.error || new Error(`Request failed with status ${response.status}`);
+                  throw (
+                    data.error ||
+                    new Error(`Request failed with status ${response.status}`)
+                  );
                 }
-              
-                setChatHistory([...chatHistory, {role: "user", content: data.result}])
-              }
+
+                setChatHistory([
+                  ...chatHistory,
+                  { role: "user", content: data.result },
+                ]);
+              };
             } catch (error: any) {
               console.error(error);
               alert(error.message);
@@ -68,7 +73,7 @@ export default function Home() {
           };
           setMediaRecorder(newMediaRecorder);
         })
-        .catch(err => console.error('Error accessing microphone:', err));
+        .catch((err) => console.error("Error accessing microphone:", err));
     }
   }, []);
 
@@ -85,55 +90,6 @@ export default function Home() {
       mediaRecorder.stop();
       setRecording(false);
     }
-  };
-
-  const handleAudioFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-
-      const data = new FormData();
-      data.append("file", file);
-      data.append("model", "whisper-1");
-      data.append("language", "en"); // language of input in ISO-639-1 format
-      data.append("prompt", ""); // text example to guide style of output
-      data.append("temperature", "0"); // defaults to 0 which allows model to adjust until certain thresholds are hit
-      setFormData(data);
-
-      // check if the size is less than 25MB
-      if (file.size > 25 * 1024 * 1024) {
-        alert("Please upload an audio file less than 25MB");
-        return;
-      }
-    }
-  };
-
-  const sendAudio = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const res = await fetch("/api/audioChat", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        body: formData,
-      });
-  
-      if (!res.ok) {
-        throw new Error(`error status: ${res.status} Request failed`);
-      }
-  
-      const data = await res.json();
-      setIsLoading(false)
-      setConvertedText(data.text);
-
-      console.log("TRANSCRIPT", data.text);
-      console.log(data);
-
-    } catch (error: any) {
-    console.error(error.error);
-  }
   };
 
   const handleUserPrompt = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -179,17 +135,9 @@ export default function Home() {
       <ChatContainer chatHist={chatHistory} />
       <form
         className="flex flex-row w-full h-20 items-center mt-4"
-        onSubmit={(e) => voiceMode? sendAudio(e) : handleSubmit(e)}
+        onSubmit={(e) => handleSubmit(e)}
       >
-        {voiceMode ? (
-          <input
-            type="file"
-            accept="audio/*"
-            onChange={(e) => {
-              handleAudioFile(e);
-            }}
-          />
-        ) : (
+        {!voiceMode && (
           <textarea
             className="text-black w-full rounded-lg p-2 w-full mr-4"
             placeholder="ask me anything"
@@ -197,26 +145,26 @@ export default function Home() {
             onChange={handleUserPrompt}
           />
         )}
+
         <div className="flex items-center justify-center h-20">
           <button
             type="submit"
             className="border-2 rounded-lg p-2 hover:bg-gray-300 hover:text-black w-28"
           >
             {voiceMode ? (
-              <button onClick={recording ? stopRecording : startRecording} >
-              {recording ? 'Stop Recording' : 'Start Recording'}
-            </button>
+              <button onClick={recording ? stopRecording : startRecording}>
+                {recording ? "Stop Recording" : "Start Recording"}
+              </button>
             ) : (
-            <span className="flex items-center">
-              {isLoading ? (
-                <ThreeDots height="54" width="100" />
-              ) : (
-                <span>Generate Answer</span>
-              )}
-            </span>
+              <span className="flex items-center">
+                {isLoading ? (
+                  <ThreeDots height="54" width="100" />
+                ) : (
+                  <span>Generate Answer</span>
+                )}
+              </span>
             )}
           </button>
-          
         </div>
       </form>
     </main>
